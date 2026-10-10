@@ -2,6 +2,8 @@ import { Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { JsonNodeComponent, JsonValue, TreeViewMode } from './json-node';
 
+// JSON editor state and interactions live in this feature component.
+
 const EXAMPLE_VALUE: JsonValue = {
   request: {
     id: '2gis-demo-2048',

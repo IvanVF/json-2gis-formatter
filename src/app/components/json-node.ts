@@ -8,6 +8,8 @@ import {
   signal,
 } from '@angular/core';
 
+// Recursive presentation component for a formatted JSON value.
+
 export type JsonPrimitive = string | number | boolean | null;
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
 export type TreeViewMode = 'expanded' | 'collapsed';
