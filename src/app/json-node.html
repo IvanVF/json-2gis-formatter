@@ -1,0 +1,70 @@
+<div class="json-node">
+  <div
+    class="node-line"
+    [class.container-line]="isContainer"
+    [class.closing-line]="false"
+    [style.padding-left.px]="depth * 22"
+  >
+    @if (isContainer) {
+      <button
+        class="toggle-button"
+        type="button"
+        [attr.aria-label]="toggleLabel"
+        [attr.aria-expanded]="!collapsed()"
+        (click)="toggle()"
+      >
+        <svg viewBox="0 0 16 16" aria-hidden="true" [class.is-collapsed]="collapsed()">
+          <path d="m5.5 3.25 4.25 4.25-4.25 4.25" />
+        </svg>
+      </button>
+    } @else {
+      <span class="toggle-placeholder" aria-hidden="true"></span>
+    }
+
+    @if (propertyKey !== null) {
+      <span class="node-key" [class.array-index]="isArrayIndex">{{ formattedKey }}</span>
+      @if (!isArrayIndex) {
+        <span class="syntax-punctuation">:</span>
+      }
+    }
+
+    @if (isContainer) {
+      <span class="syntax-punctuation">{{ openingBracket }}</span>
+      @if (collapsed()) {
+        <span class="collapsed-summary">… {{ collapsedSummary }}</span>
+        <span class="syntax-punctuation">{{ closingBracket }}</span>
+        @if (!isLast) {
+          <span class="syntax-punctuation">,</span>
+        }
+      }
+    } @else {
+      <span class="primitive-value" [class]="valueType">{{ formattedPrimitive }}</span>
+      @if (!isLast) {
+        <span class="syntax-punctuation">,</span>
+      }
+    }
+  </div>
+
+  @if (isContainer && !collapsed()) {
+    <div class="children">
+      @for (entry of entries; track entry.key; let last = $last) {
+        <app-json-node
+          [value]="entry.value"
+          [propertyKey]="entry.key"
+          [isLast]="last"
+          [depth]="depth + 1"
+          [viewMode]="viewMode"
+          [viewVersion]="viewVersion"
+        />
+      }
+    </div>
+
+    <div class="node-line closing-line" [style.padding-left.px]="depth * 22">
+      <span class="toggle-placeholder" aria-hidden="true"></span>
+      <span class="syntax-punctuation">{{ closingBracket }}</span>
+      @if (!isLast) {
+        <span class="syntax-punctuation">,</span>
+      }
+    </div>
+  }
+</div>

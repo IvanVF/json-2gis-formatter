@@ -1,0 +1,150 @@
+<section class="workspace" aria-label="JSON formatter workspace">
+  <div class="workspace-header">
+    <div class="workspace-title">
+      <span class="workspace-icon" aria-hidden="true">
+        <svg viewBox="0 0 20 20"><path d="M7.5 4.25 3.75 10l3.75 5.75M12.5 4.25 16.25 10l-3.75 5.75" /></svg>
+      </span>
+      <span>Рабочая область</span>
+    </div>
+
+    <div class="workspace-actions">
+      <div
+        class="json-status"
+        [class.invalid]="parseError()"
+        [class.draft]="isDirty() && !parseError()"
+      >
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>{{ statusLabel() }}</span>
+      </div>
+      <button class="text-button" type="button" (click)="clearEditor()">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5.75h12M8 3.5h4l.75 2.25h-5.5L8 3.5ZM6 8.25v7.25h8V8.25M8.5 10.25v3M11.5 10.25v3" /></svg>
+        Очистить
+      </button>
+    </div>
+  </div>
+
+  <div class="workspace-grid">
+    <section class="editor-column" aria-labelledby="editor-title">
+      <div class="column-heading">
+        <div>
+          <p class="column-kicker">01 / INPUT</p>
+          <h2 id="editor-title">Исходный JSON</h2>
+        </div>
+        <span class="language-badge">JSON</span>
+      </div>
+
+      <div class="editor-shell">
+        <div class="editor-gutter" aria-hidden="true">
+          @for (line of lineNumbers(); track line) {
+            <span>{{ line }}</span>
+          }
+        </div>
+        <textarea
+          aria-label="Исходный JSON"
+          [ngModel]="rawJson()"
+          (ngModelChange)="onEditorInput($event)"
+          (keydown.control.enter)="formatJson()"
+          (keydown.meta.enter)="formatJson()"
+          spellcheck="false"
+          placeholder="Вставьте JSON сюда..."
+        ></textarea>
+      </div>
+
+      <div class="editor-footer">
+        <span>{{ characterCount() }} символов · {{ lineCount() }} строк</span>
+        <span class="shortcut-hint"><kbd>⌘</kbd><kbd>↵</kbd> форматировать</span>
+      </div>
+
+      <div class="editor-buttons">
+        <button class="format-button" type="button" (click)="formatJson()">
+          <span>Форматировать</span>
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5.5 15.5 10 11 14.5" /></svg>
+        </button>
+        <button class="example-button" type="button" (click)="loadExample()">Загрузить пример</button>
+      </div>
+    </section>
+
+    <div class="column-separator" aria-hidden="true"><span></span></div>
+
+    <section class="preview-column" aria-labelledby="preview-title">
+      <div class="column-heading preview-heading">
+        <div>
+          <p class="column-kicker">02 / EXPLORE</p>
+          <h2 id="preview-title">Структура данных</h2>
+        </div>
+        <button
+          class="copy-button"
+          type="button"
+          [disabled]="!formattedJson()"
+          (click)="copyFormattedJson()"
+        >
+          @if (copied()) {
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m4.5 10.25 3.25 3.25 7.75-7.75" /></svg>
+            Скопировано
+          } @else {
+            <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="6.5" y="6.5" width="9" height="10" rx="1.5" /><path d="M13.5 6.5V4.75A1.25 1.25 0 0 0 12.25 3.5h-7A1.25 1.25 0 0 0 4 4.75v8A1.25 1.25 0 0 0 5.25 14H6.5" /></svg>
+            Копировать
+          }
+        </button>
+      </div>
+
+      <div class="tree-toolbar">
+        <div class="tree-meta">
+          <span class="tree-dot" aria-hidden="true"></span>
+          <span>{{ nodeCount() }} {{ nodeCount() === 1 ? 'узел' : 'узлов' }}</span>
+          <span class="meta-divider">/</span>
+          <span>{{ formattedLineCount() }} строк</span>
+        </div>
+        <div class="tree-actions" role="group" aria-label="Управление деревом">
+          <button
+            type="button"
+            [class.active]="viewMode() === 'expanded'"
+            (click)="setViewMode('expanded')"
+          >
+            Раскрыть всё
+          </button>
+          <button
+            type="button"
+            [class.active]="viewMode() === 'collapsed'"
+            (click)="setViewMode('collapsed')"
+          >
+            Скрыть всё
+          </button>
+        </div>
+      </div>
+
+      <div class="tree-shell">
+        @if (parsedJson() !== undefined) {
+          <div class="tree-scroll">
+            <app-json-node
+              [value]="parsedJson()!"
+              [viewMode]="viewMode()"
+              [viewVersion]="viewVersion()"
+            />
+          </div>
+        } @else if (parseError()) {
+          <div class="empty-state error-state">
+            <span class="empty-icon">!</span>
+            <h3>Не получилось разобрать</h3>
+            <p>{{ parseError() }}</p>
+            <button type="button" (click)="formatJson()">Попробовать снова</button>
+          </div>
+        } @else {
+          <div class="empty-state">
+            <span class="empty-icon">&#123; &#125;</span>
+            <h3>Здесь появится дерево</h3>
+            <p>Вставьте JSON слева и запустите форматирование.</p>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</section>
+
+@if (parseError()) {
+  <div class="error-banner" role="alert">
+    <span class="error-mark">!</span>
+    <span>{{ parseError() }}</span>
+    <button type="button" aria-label="Закрыть сообщение" (click)="dismissError()">×</button>
+  </div>
+}

@@ -1,0 +1,122 @@
+:host {
+  display: block;
+  color: #d7e2ed;
+  font: 500 13px/1.8 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+}
+
+.node-line {
+  display: flex;
+  align-items: center;
+  min-height: 25px;
+  white-space: pre;
+}
+
+.node-line:hover {
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.toggle-button,
+.toggle-placeholder {
+  width: 20px;
+  height: 22px;
+  flex: 0 0 20px;
+}
+
+.toggle-button {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  color: #8091a5;
+  background: transparent;
+  cursor: pointer;
+}
+
+.toggle-button:hover {
+  color: #eef7ff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toggle-button:focus-visible {
+  outline: 2px solid #6ed8c1;
+  outline-offset: 1px;
+}
+
+.toggle-button svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+  transition: transform 160ms ease;
+}
+
+.toggle-button svg.is-collapsed {
+  transform: rotate(0deg);
+}
+
+.toggle-button svg:not(.is-collapsed) {
+  transform: rotate(90deg);
+}
+
+.node-key {
+  color: #8ecbff;
+}
+
+.node-key.array-index {
+  min-width: 22px;
+  margin-right: 3px;
+  color: #8998a9;
+  font-size: 11px;
+}
+
+.syntax-punctuation {
+  color: #7e91a4;
+}
+
+.primitive-value {
+  margin-left: 4px;
+}
+
+.string-value {
+  color: #b8e89b;
+}
+
+.number-value {
+  color: #f4c77a;
+}
+
+.boolean-value {
+  color: #c5a6ff;
+}
+
+.null-value {
+  color: #ef9eb1;
+}
+
+.collapsed-summary {
+  margin: 0 5px;
+  color: #7f91a4;
+  font-style: italic;
+}
+
+.children {
+  position: relative;
+}
+
+.children::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 31px;
+  border-left: 1px solid rgba(126, 145, 164, 0.2);
+  content: '';
+  pointer-events: none;
+}
+
+.closing-line {
+  color: #7e91a4;
+}

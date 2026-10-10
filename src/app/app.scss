@@ -1,0 +1,142 @@
+:host {
+  --paper: #f4f6ef;
+  --ink: #142624;
+  --muted: #72807a;
+  --line: #dce4da;
+  --mint: #b9ead2;
+  --mint-dark: #4e9a7b;
+  --lime: #e0f27f;
+  --coral: #ff856e;
+  display: block;
+  min-height: 100dvh;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 84% 8%, rgba(224, 242, 127, 0.32), transparent 20rem),
+    var(--paper);
+}
+
+.app-shell {
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+.topbar,
+.page-content {
+  width: calc(100% - 32px);
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 82px;
+  border-bottom: 1px solid rgba(20, 38, 36, 0.1);
+}
+
+.brand,
+.topbar-status,
+.page-footer {
+  display: flex;
+  align-items: center;
+}
+
+.brand {
+  gap: 11px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.brand-mark {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  border-radius: 9px;
+  color: #1b302b;
+  background: var(--lime);
+  font: 700 12px/1 'SFMono-Regular', Consolas, monospace;
+  letter-spacing: -0.12em;
+  text-indent: -2px;
+}
+
+.brand-name span {
+  color: var(--mint-dark);
+  font-weight: 500;
+}
+
+.topbar-status {
+  gap: 8px;
+  color: #829088;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.status-pulse {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mint-dark);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+
+.page-content {
+  padding: 10px 0 34px;
+}
+
+.page-footer {
+  justify-content: space-between;
+  padding-top: 25px;
+  color: #8b978f;
+  font-size: 10px;
+}
+
+.footer-mark {
+  color: #a2aea5;
+  letter-spacing: 0.04em;
+}
+
+.footer-mark i {
+  margin-left: 4px;
+  color: var(--coral);
+  font-style: normal;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(78, 154, 123, 0.12);
+  }
+
+  50% {
+    box-shadow: 0 0 0 7px rgba(78, 154, 123, 0.03);
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar,
+  .page-content {
+    width: calc(100% - 28px);
+  }
+
+  .topbar {
+    height: 68px;
+  }
+
+  .topbar-status {
+    font-size: 8px;
+    letter-spacing: 0.08em;
+  }
+
+  .page-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+    line-height: 1.5;
+  }
+}

@@ -1,12 +1,10 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { JsonFormatterComponent } from './json-formatter';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [JsonFormatterComponent],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
-export class App {
-  protected readonly title = signal('json-2gis-formatter');
-}
+export class App {}
