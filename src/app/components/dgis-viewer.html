@@ -1,0 +1,164 @@
+<section class="viewer-page" aria-labelledby="viewer-title">
+  <div class="viewer-heading">
+    <div class="source-card">
+      <span class="source-icon" aria-hidden="true">&#123; &#125;</span>
+      <div>
+        <span class="source-kicker">Источник данных</span>
+        <strong>response-2gis.txt</strong>
+      </div>
+      <span class="source-status"><i></i> local</span>
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-panel" aria-live="polite">
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <span>Загружаем организации из ответа 2ГИС…</span>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="viewer-error" role="alert">
+      <span class="error-mark">!</span>
+      <div>
+        <strong>Не удалось загрузить ответ</strong>
+        <p>{{ errorMessage() }}</p>
+      </div>
+      <button type="button" (click)="retry()">Повторить</button>
+    </div>
+  } @else {
+    <div class="viewer-toolbar">
+      <label class="search-field">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.75" cy="8.75" r="5.25" /><path d="m12.75 12.75 4 4" /></svg>
+        <input
+          type="search"
+          aria-label="Поиск организации"
+          placeholder="Найти организацию..."
+          [ngModel]="searchTerm()"
+          (ngModelChange)="setSearchTerm($event)"
+        />
+      </label>
+
+      <div class="filter-tabs" role="group" aria-label="Фильтр по способам связи">
+        <button
+          type="button"
+          [class.active]="contactFilter() === 'all'"
+          (click)="setContactFilter('all')"
+        >
+          Все <span>{{ cards().length }}</span>
+        </button>
+        <button
+          type="button"
+          [class.active]="contactFilter() === 'with-website'"
+          (click)="setContactFilter('with-website')"
+        >
+          Сайт <span>{{ withWebsiteCount() }}</span>
+        </button>
+        <button
+          type="button"
+          [class.active]="contactFilter() === 'with-phone'"
+          (click)="setContactFilter('with-phone')"
+        >
+          Телефон <span>{{ withPhoneCount() }}</span>
+        </button>
+        <button
+          type="button"
+          [class.active]="contactFilter() === 'with-vk'"
+          (click)="setContactFilter('with-vk')"
+        >
+          VK <span>{{ withVkCount() }}</span>
+        </button>
+        <button
+          type="button"
+          [class.active]="contactFilter() === 'with-email'"
+          (click)="setContactFilter('with-email')"
+        >
+          Почта <span>{{ withEmailCount() }}</span>
+        </button>
+        <button
+          type="button"
+          [class.active]="contactFilter() === 'without-website'"
+          (click)="setContactFilter('without-website')"
+        >
+          Без сайта <span>{{ withoutWebsiteCount() }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="results-summary">
+      <div>
+        <strong>{{ filteredCards().length }}</strong>
+        <span>из {{ responseTotal() }} организаций</span>
+      </div>
+      <span class="summary-note">
+        {{ withWebsiteCount() }} с сайтом · {{ withPhoneCount() }} с телефоном ·
+        {{ withVkCount() }} с VK · {{ withEmailCount() }} с почтой
+      </span>
+    </div>
+
+    @if (filteredCards().length) {
+      <div class="organization-grid">
+        @for (card of filteredCards(); track card.id; let index = $index) {
+          <article class="organization-card" [class.has-website]="card.website">
+            <div class="card-identity">
+              <div class="card-topline">
+                <span class="card-number">{{ (index + 1).toString().padStart(2, '0') }}</span>
+                @if (card.website) {
+                  <span class="website-badge"><i></i> сайт</span>
+                } @else {
+                  <span class="no-website-badge">без сайта</span>
+                }
+              </div>
+
+              <h2>{{ card.name }}</h2>
+              <p class="card-subtitle">{{ card.subtitle }}</p>
+            </div>
+
+            <div class="card-facts">
+              <div class="card-details">
+                @if (card.rating !== undefined) {
+                  <span class="rating"><b>★</b> {{ card.rating.toFixed(1) }}</span>
+                  <span class="detail-divider">·</span>
+                }
+                <span>{{ card.reviewCount }} отзывов</span>
+              </div>
+              <span class="card-location">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16 8.5c0 4-6 8-6 8s-6-4-6-8a6 6 0 1 1 12 0Z" /><circle cx="10" cy="8.5" r="2" /></svg>
+                {{ card.latitude.toFixed(4) }}, {{ card.longitude.toFixed(4) }}
+              </span>
+              @if (card.schedule) {
+                <span class="schedule-label">{{ card.schedule }}</span>
+              }
+            </div>
+
+            <div class="card-contacts" aria-label="Способы связи">
+              @for (contact of card.contacts; track contact.kind + contact.value) {
+                <a
+                  class="contact-item"
+                  [class.contact-website]="contact.kind === 'website'"
+                  [class.contact-phone]="contact.kind === 'phone'"
+                  [class.contact-email]="contact.kind === 'email'"
+                  [class.contact-social]="contact.kind === 'vk' || contact.kind === 'max'"
+                  [href]="contact.href"
+                  [attr.target]="contact.kind === 'phone' || contact.kind === 'email' ? null : '_blank'"
+                  rel="noopener noreferrer"
+                >
+                  <span class="contact-symbol" aria-hidden="true">{{ contactIcon(contact.kind) }}</span>
+                  <span class="contact-copy">
+                    <small>{{ contact.label }}</small>
+                    <strong>{{ contact.displayValue }}</strong>
+                  </span>
+                </a>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="no-results">
+        <span class="no-results-icon">⌕</span>
+        <h2>Ничего не найдено</h2>
+        <p>Попробуйте изменить запрос или выбрать другой фильтр.</p>
+        <button type="button" (click)="setSearchTerm(''); setContactFilter('all')">Сбросить фильтры</button>
+      </div>
+    }
+  }
+</section>

@@ -5,6 +5,17 @@
       <span class="brand-name">json<span>formatter</span></span>
     </div>
 
+    <nav class="topbar-nav" aria-label="Навигация">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Форматтер
+      </a>
+      <a routerLink="/viewer" routerLinkActive="active">2ГИС viewer</a>
+    </nav>
+
     <div class="topbar-status">
       <span class="status-pulse" aria-hidden="true"></span>
       <span>локальный инструмент</span>
@@ -12,7 +23,7 @@
   </header>
 
   <main class="page-content">
-    <app-json-formatter />
+    <router-outlet />
 
     <footer class="page-footer">
       <span>Никаких запросов к серверу — данные остаются в браузере.</span>
