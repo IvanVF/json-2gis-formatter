@@ -1,11 +1,13 @@
 import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import {
   DgisContactKind,
   DgisOrganizationCard,
   toDgisOrganizationCard,
 } from '../models/dgis-response.model';
 import { DgisResponseService } from '../services/dgis-response.service';
+import { DgisCatalogService } from '../services/dgis-catalog.service';
 
 type ContactFilter =
   | 'all'
@@ -14,6 +16,7 @@ type ContactFilter =
   | 'with-phone'
   | 'with-vk'
   | 'with-email';
+type DataSource = 'file' | 'api';
 
 @Component({
   selector: 'app-dgis-viewer',
@@ -24,10 +27,13 @@ type ContactFilter =
 })
 export class DgisViewerComponent {
   private readonly responseService = inject(DgisResponseService);
+  private readonly catalogService = inject(DgisCatalogService);
 
   protected readonly cards = signal<DgisOrganizationCard[]>([]);
   protected readonly responseTotal = signal(0);
   protected readonly searchTerm = signal('');
+  protected readonly apiQuery = signal('психолог');
+  protected readonly source = signal<DataSource>('file');
   protected readonly contactFilter = signal<ContactFilter>('all');
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
@@ -64,6 +70,24 @@ export class DgisViewerComponent {
     this.contactFilter.set(filter);
   }
 
+  protected async setSource(source: DataSource): Promise<void> {
+    if (this.source() === source) {
+      return;
+    }
+
+    this.source.set(source);
+    await this.loadResponse();
+  }
+
+  protected setApiQuery(value: string): void {
+    this.apiQuery.set(value);
+  }
+
+  protected async searchApi(): Promise<void> {
+    this.source.set('api');
+    await this.loadResponse();
+  }
+
   protected setSearchTerm(value: string): void {
     this.searchTerm.set(value);
   }
@@ -94,7 +118,11 @@ export class DgisViewerComponent {
     this.errorMessage.set(null);
 
     try {
-      const response = await this.responseService.loadResponse();
+      const query = this.apiQuery().trim() || 'психолог';
+      const response =
+        this.source() === 'api'
+          ? await firstValueFrom(this.catalogService.searchOrganizations(query))
+          : await this.responseService.loadResponse();
       this.cards.set(response.result.items.map(toDgisOrganizationCard));
       this.responseTotal.set(response.result.total);
     } catch (error) {

@@ -124,6 +124,85 @@ h1 em {
   background: var(--mint-dark);
 }
 
+.source-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -16px 0 17px;
+}
+
+.source-switch {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border: 1px solid #e0e7dc;
+  border-radius: 8px;
+  background: #f1f5ed;
+}
+
+.source-switch button,
+.api-query-control button {
+  border: 0;
+  cursor: pointer;
+  font: 600 10px/1 inherit;
+}
+
+.source-switch button {
+  padding: 8px 11px;
+  border-radius: 5px;
+  color: #7d8d83;
+  background: transparent;
+}
+
+.source-switch button:hover,
+.source-switch button.active {
+  color: #18352d;
+  background: var(--lime);
+}
+
+.api-query-control {
+  display: flex;
+  align-items: center;
+  min-width: min(100%, 520px);
+  overflow: hidden;
+  border: 1px solid #d8e3d7;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.api-query-prefix {
+  padding-left: 11px;
+  color: #94a29a;
+  font: 600 11px/1 'SFMono-Regular', Consolas, monospace;
+}
+
+.api-query-control input {
+  width: 100%;
+  min-width: 120px;
+  padding: 10px 8px;
+  border: 0;
+  outline: 0;
+  color: var(--ink);
+  background: transparent;
+  font: 500 11px/1 inherit;
+}
+
+.api-query-control input::placeholder {
+  color: #9ca9a0;
+}
+
+.api-query-control button {
+  align-self: stretch;
+  padding: 0 14px;
+  color: #18352d;
+  background: var(--lime);
+}
+
+.api-query-control button:hover {
+  background: #d3eb70;
+}
+
 .viewer-toolbar {
   display: flex;
   align-items: center;
@@ -609,6 +688,25 @@ input:focus-visible {
   .viewer-heading {
     gap: 23px;
     margin-bottom: 25px;
+  }
+
+  .source-controls {
+    align-items: stretch;
+    flex-direction: column;
+    margin-top: -8px;
+  }
+
+  .source-switch {
+    width: 100%;
+  }
+
+  .source-switch button {
+    flex: 1;
+  }
+
+  .api-query-control {
+    min-width: 0;
+    width: 100%;
   }
 
   h1 {

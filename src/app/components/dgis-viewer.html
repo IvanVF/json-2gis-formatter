@@ -4,16 +4,58 @@
       <span class="source-icon" aria-hidden="true">&#123; &#125;</span>
       <div>
         <span class="source-kicker">Источник данных</span>
-        <strong>response-2gis.txt</strong>
+        @if (source() === 'api') {
+          <strong>Catalog API / markers</strong>
+        } @else {
+          <strong>response-2gis.txt</strong>
+        }
       </div>
-      <span class="source-status"><i></i> local</span>
+      <span class="source-status"><i></i> {{ source() === 'api' ? 'http' : 'local' }}</span>
     </div>
+  </div>
+
+  <div class="source-controls">
+    <div class="source-switch" role="group" aria-label="Источник данных">
+      <button
+        type="button"
+        [class.active]="source() === 'file'"
+        (click)="setSource('file')"
+      >
+        Локальный файл
+      </button>
+      <button
+        type="button"
+        [class.active]="source() === 'api'"
+        (click)="setSource('api')"
+      >
+        Catalog API
+      </button>
+    </div>
+
+    @if (source() === 'api') {
+      <div class="api-query-control">
+        <span class="api-query-prefix">q=</span>
+        <input
+          type="search"
+          aria-label="Ключевое слово для поиска в API 2ГИС"
+          placeholder="Ключевое слово, например психолог"
+          [ngModel]="apiQuery()"
+          (ngModelChange)="setApiQuery($event)"
+          (keydown.enter)="searchApi()"
+        />
+        <button type="button" (click)="searchApi()">Искать</button>
+      </div>
+    }
   </div>
 
   @if (isLoading()) {
     <div class="loading-panel" aria-live="polite">
       <span class="loading-spinner" aria-hidden="true"></span>
-      <span>Загружаем организации из ответа 2ГИС…</span>
+      @if (source() === 'api') {
+        <span>Запрашиваем «{{ apiQuery() || 'психолог' }}» в API 2ГИС…</span>
+      } @else {
+        <span>Загружаем организации из ответа 2ГИС…</span>
+      }
     </div>
   } @else if (errorMessage()) {
     <div class="viewer-error" role="alert">
